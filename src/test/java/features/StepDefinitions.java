@@ -1,6 +1,7 @@
 package features;
 
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -62,5 +63,80 @@ public class StepDefinitions {
         //Assert
         Assert.assertEquals(expectedResult, actualResult,0);
         System.out.println("The new final balance is: " + actualResult);
+    }
+
+    @Given("Danny has a starting balance of {double}")
+    public void dannyHasAStartingBalanceOfStartBalance(double startBalance) {
+        danny.getAccount("EUR").setBalance(startBalance);
+    }
+
+    @When("Danny now tops up by {int}")
+    public void dannyNowTopsUpByTopUpAmount(double topUpAmount) {
+
+        //danny.getAccount("EUR").addFunds(topUpAmount);
+        if (topUpMethod.isRejects()) {
+            System.out.println("Payment of " + topUpAmount + " Rejected by bank" );
+        }
+        else {
+            danny.getAccount("EUR").addFunds(topUpAmount);
+        }
+    }
+
+    @Then("The balance in his euro account should be {double}")
+    public void theBalanceInHisEuroAccountShouldBeNewBalance(double newBalance) {
+        double expectedResult = newBalance;
+        double actualResult = danny.getAccount("EUR").getBalance();
+
+        Assert.assertEquals(expectedResult, actualResult, 0);
+    }
+
+    @Given("Danny has {double} euro in his Revolut")
+    public void dannyHasEuroInHisRevolut(double arg0) {
+        danny.getAccount("EUR").setBalance(arg0);
+    }
+
+    @And("Danny selects his {paymentService} to top up with")
+    public void dannySelectsHisCreditCardToTopUpWith(PaymentService topUpSource) {
+        System.out.println("The selected payment service type was " + topUpSource.getType());
+        topUpMethod = topUpSource;
+    }
+
+    @When("Danny adds {double} euro")
+    public void dannyAddsEuro(double arg0) {
+        if (topUpMethod.isRejects()) {
+            System.out.println("Payment of " + arg0 + " Rejected by bank" );
+        }
+        else {
+            danny.getAccount("EUR").addFunds(arg0);
+        }
+
+    }
+
+    @Then("The topup fails and Dannys balance remains {double}")
+    public void theTopupFailsAndDannysBalanceRemains(double arg0) {
+        double expectedResult = arg0;
+        double actualResult = danny.getAccount("EUR").getBalance();
+
+        Assert.assertEquals(expectedResult, actualResult, 0);
+    }
+
+
+    @Given("that Danny has {double} euro in his account")
+    public void thatDannyHasEuroInHisAccount(double arg0) {
+        danny.getAccount("EUR").setBalance(arg0);
+    }
+
+    @When("Danny makes a purchase of {double} euro")
+    public void dannyMakesAPurchaseOfEuro(double arg0) {
+        double newAccBal = danny.getAccount("EUR").getBalance() - arg0;
+        danny.getAccount("EUR").setBalance(newAccBal);
+    }
+
+    @Then("The balance should be {double}")
+    public void theBalanceShouldBe(double arg0) {
+        double actualResult = danny.getAccount("EUR").getBalance();
+        double expectedResult = arg0;
+
+        Assert.assertEquals(expectedResult, actualResult, 0);
     }
 }

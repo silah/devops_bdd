@@ -28,17 +28,23 @@ Feature: TopUp Account
     # https://cucumber.io/docs/cucumber/api/
   Scenario Outline: Add various amounts to Revolut account
     Given Danny has a starting balance of <startBalance>
-    And Danny selects his DebitCard as his topUp method
+    And Danny selects his <topMethod> as his topUp method
     When Danny now tops up by <topUpAmount>
     Then The balance in his euro account should be <newBalance>
     Examples:
-      | startBalance| topUpAmount | newBalance  |
-      | 0           | 100         | 100         |
-      | 14          | 20          | 34          |
-      | 23          | 30          | 53          |
+      | startBalance| topUpAmount | newBalance  | topMethod  |
+      | 0           | 100         | 100         | DebitCard  |
+      | 14          | 20          | 34          | DebitCard  |
+      | 23          | 30          | 53          | DebitCard  |
+      | 23          | 30          | 23          | CreditCard |
+      | 0           | 100         | 0           | CreditCard  |
+      | 14          | 20          | 14          | CreditCard  |
+
+
 
   Rule: The account balance shouldn't change if the topup payment request is rejected by the payment service
 
-    #The scenarios below will need a payment service that accepts or rejects a request to add funds
+    #The scenarios below are covered in the scenario above, where CreditCard will reject the transaction
+    # and DebitCard will allow the transaction
     Scenario: Payment service rejects the request
     Scenario: Payment service accepts the request
